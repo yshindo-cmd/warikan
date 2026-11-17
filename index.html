@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>割り勘計算</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="container">
+    <h1>割り勘計算</h1>
+
+    <fieldset class="modes">
+      <legend class="sr-only">計算モード</legend>
+      <label class="mode"><input type="radio" name="mode" value="equal" checked><span>全員平等に計算</span></label>
+      <label class="mode"><input type="radio" name="mode" value="exclude"><span>払わない人を選んで計算</span></label>
+      <label class="mode"><input type="radio" name="mode" value="household"><span>世帯ごとに計算</span></label>
+    </fieldset>
+    <p id="mode-desc" class="desc"></p>
+
+    <!-- 全員平等に計算 -->
+    <section id="panel-equal" class="panel">
+          <div class="share-row">
+          
+          <p data-role="share-msg" class="note" role="status" hidden></p>
+        </div>
+      <div class="count-row">
+        <span class="label">参加人数</span>
+        <div class="stepper">
+          <button type="button" data-role="count-minus" aria-label="人数を減らす">−</button>
+          <input type="text" data-role="count-input" inputmode="numeric" autocomplete="off" aria-label="参加人数">
+          <button type="button" data-role="count-plus" aria-label="人数を増やす">＋</button>
+        </div>
+      </div>
+
+      <div data-role="members"></div>
+
+      <button type="button" data-role="calc-btn" class="primary">清算結果を見る</button>
+      <p data-role="error" class="error" role="alert" hidden></p>
+
+      <section data-role="result" class="result" hidden>
+        <h2>清算結果</h2>
+        <p data-role="result-summary" class="summary"></p>
+        <ul data-role="result-list" class="transfers"></ul>
+
+        <div class="round-row" role="group" aria-label="送金額の丸め方">
+          <span class="round-label">送金額の丸め方</span>
+          <button type="button" class="round-btn" data-unit="1">そのまま</button>
+          <button type="button" class="round-btn" data-unit="10">10円単位</button>
+          <button type="button" class="round-btn" data-unit="100">100円単位</button>
+        </div>
+        <div data-role="remainder-box" class="remainder-box" hidden>
+          <p data-role="per-person-note" class="note"></p>
+          <p data-role="remainder-note" class="note"></p>
+        </div>
+
+        <details class="detail">
+          <summary>明細を見る</summary>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>名前</th><th>立替額</th><th>負担額</th><th>受取・支払</th></tr>
+              </thead>
+              <tbody data-role="detail-body"></tbody>
+            </table>
+          </div>
+          <p class="note">受取・支払は、上に出ている送金額の合計です。</p>
+        </details>
+      </section>
+    </section>
+
+        <!-- 払わない人を選んで計算 -->
+    <section id="panel-exclude" class="panel" hidden>
+          <div class="share-row">
+          <p data-role="share-msg" class="note" role="status" hidden></p>
+        </div>
+      <section class="ex-section">
+        <h2 class="ex-title">1　払わない人がいる項目を設定</h2>
+        <p class="note">ガソリン代など、割り勘する際に除外したい人がいる項目を設定してください。項目名は変えられます。</p>
+        <div data-role="items"></div>
+        <button type="button" class="sub-btn" data-role="add-item">＋ 別の項目を追加する</button>
+      </section>
+
+      <section class="ex-section">
+        <h2 class="ex-title">2　人数</h2>
+        <p class="note">設定した項目を払うかどうかで分けて、人数を入れてください。立て替えた人も人数に含めます。</p>
+        <div data-role="patterns"></div>
+      </section>
+
+      <section class="ex-section">
+        <h2 class="ex-title">3　立て替え金額</h2>
+        <p class="note">立て替えた人と金額を入れて、その人が払わない項目にチェックを付けてください。</p>
+        <div data-role="payers"></div>
+        <button type="button" class="sub-btn" data-role="add-payer">＋ 立て替えた人を追加する</button>
+      </section>
+
+      <button type="button" data-role="calc-btn" class="primary">清算結果を見る</button>
+      <p data-role="error" class="error" role="alert" hidden></p>
+
+            <section data-role="result" class="result" hidden>
+        <h2>清算結果</h2>
+        <p data-role="result-summary" class="summary"></p>
+
+        <h3 class="sub-title">1人あたりの負担額</h3>
+        <ul data-role="burden-list" class="burdens"></ul>
+
+        <h3 class="sub-title">清算</h3>
+                <p class="note">①②…は、立て替えていない人を区別する番号です。誰が何番かは、みなさんで決めてください。</p>
+        <ul data-role="result-list" class="transfers"></ul>
+
+        <div class="round-row" role="group" aria-label="送金額の丸め方">
+          <span class="round-label">送金額の丸め方</span>
+          <button type="button" class="round-btn" data-unit="1">そのまま</button>
+          <button type="button" class="round-btn" data-unit="10">10円単位</button>
+          <button type="button" class="round-btn" data-unit="100">100円単位</button>
+        </div>
+        <p data-role="remainder-note" class="note" hidden></p>
+
+        <details class="detail">
+          <summary>明細を見る</summary>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>名前</th><th>立替額</th><th>負担額</th><th>受取・支払</th></tr>
+              </thead>
+              <tbody data-role="detail-body"></tbody>
+            </table>
+          </div>
+          <p class="note">受取・支払は、上に出ている送金額の合計です。</p>
+        </details>
+      </section>
+    </section>
+
+        <!-- 世帯ごとに計算 -->
+    <section id="panel-household" class="panel" hidden>
+          <div class="share-row">
+    
+        </div>
+      <section class="ex-section">
+        <h2 class="ex-title">1　子どもの負担割合</h2>
+        <p class="note">大人を100%としたときの、子ども1人あたりの負担割合が選択できます。無料にする方（未就学児など）がいる場合は、次の入力時には人数に含まないでください。</p>
+        <div class="ratio-row" role="group" aria-label="子どもの負担割合">
+          <button type="button" class="ratio-btn" data-ratio="25">25%</button>
+          <button type="button" class="ratio-btn" data-ratio="50">50%</button>
+          <button type="button" class="ratio-btn" data-ratio="75">75%</button>
+        </div>
+      </section>
+
+      <section class="ex-section">
+        <h2 class="ex-title">2　世帯ごとの人数と立て替え金額</h2>
+        <p class="note">立て替えていない世帯は、金額を空欄にしてください。</p>
+        <div data-role="households"></div>
+        <button type="button" class="sub-btn" data-role="add-household">＋ 世帯を追加する</button>
+      </section>
+
+      <button type="button" data-role="calc-btn" class="primary">清算結果を見る</button>
+      <p data-role="error" class="error" role="alert" hidden></p>
+
+      <section data-role="result" class="result" hidden>
+        <h2>清算結果</h2>
+        <p data-role="result-summary" class="summary"></p>
+        <ul data-role="result-list" class="transfers"></ul>
+
+        <div class="round-row" role="group" aria-label="送金額の丸め方">
+          <span class="round-label">送金額の丸め方</span>
+          <button type="button" class="round-btn" data-unit="1">そのまま</button>
+          <button type="button" class="round-btn" data-unit="10">10円単位</button>
+          <button type="button" class="round-btn" data-unit="100">100円単位</button>
+        </div>
+        <p data-role="remainder-note" class="note" hidden></p>
+
+        <details class="detail">
+          <summary>明細を見る</summary>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>名前</th><th>口数</th><th>立替額</th><th>負担額</th><th>受取・支払</th></tr>
+              </thead>
+              <tbody data-role="detail-body"></tbody>
+            </table>
+          </div>
+          <p class="note">受取・支払は、上に出ている送金額の合計です。</p>
+        </details>
+      </section>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
